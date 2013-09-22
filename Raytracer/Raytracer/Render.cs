@@ -1,6 +1,6 @@
 ﻿using Raytracer.Calculus;
 
-//http://www.youtube.com/watch?v=4apLfBb9rbE
+//http://www.youtube.com/playlist?list=PLHm_I0tE5kKPPWXkTTtOn8fkcwEGZNETh
 namespace Raytracer
 {
     public class Render
@@ -18,7 +18,7 @@ namespace Raytracer
 
         private Camera CreateCamera()
         {
-            var camPos = new Vect(2, 3, 1);
+            var camPos = new Vect(3, 1.5, 4);
             var lookAt = new Vect(0, 0, 0);
             var diffBtw = new Vect(camPos.X - lookAt.X, camPos.Y - lookAt.Y, camPos.Z - lookAt.Z);
             var camDir = diffBtw.Negative().Normalize();
