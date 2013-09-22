@@ -1,5 +1,6 @@
 ﻿using Raytracer.Calculus;
 
+//http://www.youtube.com/watch?v=4apLfBb9rbE
 namespace Raytracer
 {
     public class Render
@@ -12,6 +13,7 @@ namespace Raytracer
         {
             var camera = CreateCamera();
 
+            var light = new Light(new Vect(-7, 10, -10), new Color(1.0d, 1.0d, 1.0d, 0));
         }
 
         private Camera CreateCamera()
