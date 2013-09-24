@@ -57,6 +57,11 @@ namespace Raytracer.Calculus
             return new Vect(X+v.X, Y+v.Y, Z+v.Z);
         }
 
+        public Vect Substract(Vect v)
+        {
+            return new Vect(X - v.X, Y - v.Y, Z - v.Z);
+        }
+
         public Vect Mult(double scalar)
         {
             return new Vect(X *scalar, Y * scalar, Z * scalar);
