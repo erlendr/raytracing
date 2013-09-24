@@ -51,9 +51,9 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Raytracer.Math\Raytracer.Math.csproj">
+    <ProjectReference Include="..\Raytracer.Math\Raytracer.Calculus.csproj">
       <Project>{83c1a439-faba-43fb-9bba-bc6c69aef24c}</Project>
-      <Name>Raytracer.Math</Name>
+      <Name>Raytracer.Calculus</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
