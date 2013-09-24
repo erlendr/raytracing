@@ -3,10 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Raytracer", "Raytracer\Raytracer.csproj", "{74B2FEF4-D7A9-4370-B17B-F37AE7A2515E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Raytracer.Calculus", "Raytracer.Math\Raytracer.Calculus.csproj", "{83C1A439-FABA-43FB-9BBA-BC6C69AEF24C}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Raytracer.Calculus.Tests", "Raytracer.Math.Tests\Raytracer.Calculus.Tests.csproj", "{15B10FF2-B2E2-4296-8310-788EE23AB48D}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{A0F7BD1E-42EF-44AF-B140-539D575AB82C}"
 	ProjectSection(SolutionItems) = preProject
 		.nuget\NuGet.Config = .nuget\NuGet.Config
@@ -14,7 +10,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{A0F7BD
 		.nuget\NuGet.targets = .nuget\NuGet.targets
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Raytracer.Console", "RaytracerApp\Raytracer.Console.csproj", "{7A1A9DA3-169B-4B53-A28E-AC81FF4DFB92}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Raytracer.Calculus", "Raytracer.Calculus\Raytracer.Calculus.csproj", "{83C1A439-FABA-43FB-9BBA-BC6C69AEF24C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Raytracer.Calculus.Tests", "Raytracer.Calculus.Tests\Raytracer.Calculus.Tests.csproj", "{15B10FF2-B2E2-4296-8310-788EE23AB48D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Raytracer.Console", "Raytracer.Console\Raytracer.Console.csproj", "{7A1A9DA3-169B-4B53-A28E-AC81FF4DFB92}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

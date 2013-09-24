@@ -51,7 +51,7 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Raytracer.Math\Raytracer.Calculus.csproj">
+    <ProjectReference Include="..\Raytracer.Calculus\Raytracer.Calculus.csproj">
       <Project>{83c1a439-faba-43fb-9bba-bc6c69aef24c}</Project>
       <Name>Raytracer.Calculus</Name>
     </ProjectReference>
