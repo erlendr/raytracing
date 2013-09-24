@@ -1,6 +1,8 @@
 ﻿using Raytracer.Calculus;
 
-//http://www.youtube.com/playlist?list=PLHm_I0tE5kKPPWXkTTtOn8fkcwEGZNETh
+/**
+ * http://www.youtube.com/playlist?list=PLHm_I0tE5kKPPWXkTTtOn8fkcwEGZNETh
+*/
 namespace Raytracer
 {
     public class Renderer
@@ -13,15 +15,14 @@ namespace Raytracer
         {
             var camera = CreateCamera();
             
-            Color whiteLight = new Color(1.0d, 1.0d, 1.0d, 0d);
-            Color prettyGreen = new Color(0.5d, 1.0d, 0.5d, 0.3d);
-            Color gray = new Color(0.5d, 0.5d, 0.5d, 0d);
-            Color black = new Color(0d, 0d, 0d, 0d);
+            var whiteLight = new Color(1.0d, 1.0d, 1.0d, 0d);
+            var prettyGreen = new Color(0.5d, 1.0d, 0.5d, 0.3d);
+            var gray = new Color(0.5d, 0.5d, 0.5d, 0d);
+            var black = new Color(0d, 0d, 0d, 0d);
 
             var lightPosition = new Vect(-7, 10, -10);
             var light = new Light(lightPosition, whiteLight);
-
-
+            
         }
 
         private Camera CreateCamera()

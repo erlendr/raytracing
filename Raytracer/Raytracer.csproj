@@ -44,6 +44,12 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ImageHandler.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Raytracer.Calculus\Raytracer.Calculus.csproj">
+      <Project>{83C1A439-FABA-43FB-9BBA-BC6C69AEF24C}</Project>
+      <Name>Raytracer.Calculus</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
