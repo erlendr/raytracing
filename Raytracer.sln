@@ -14,7 +14,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{A0F7BD
 		.nuget\NuGet.targets = .nuget\NuGet.targets
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RaytracerApp", "RaytracerApp\RaytracerApp.csproj", "{7A1A9DA3-169B-4B53-A28E-AC81FF4DFB92}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Raytracer.Console", "RaytracerApp\Raytracer.Console.csproj", "{7A1A9DA3-169B-4B53-A28E-AC81FF4DFB92}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

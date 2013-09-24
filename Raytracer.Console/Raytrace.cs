@@ -1,18 +1,15 @@
-﻿using System;
-using Raytracer;
-
-namespace RaytracerApp
+﻿namespace Raytracer.Console
 {
     class Raytrace
     {
         static void Main(string[] args)
         {
+            System.Console.WriteLine("Starting raytracer...");
             //var render = new Renderer();
             //render.Render();
-            Console.WriteLine("Starting raytracer...");
             var imageHandler = new ImageHandler();
             imageHandler.CreateImage(320, 240);
-            Console.WriteLine("Done");
+            System.Console.WriteLine("Done");
         }
     }
 }

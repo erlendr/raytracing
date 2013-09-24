@@ -7,8 +7,8 @@
     <ProjectGuid>{7A1A9DA3-169B-4B53-A28E-AC81FF4DFB92}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>RaytracerApp</RootNamespace>
-    <AssemblyName>RaytracerApp</AssemblyName>
+    <RootNamespace>Raytracer.Console</RootNamespace>
+    <AssemblyName>Raytracer.Console</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
