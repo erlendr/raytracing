@@ -30,9 +30,10 @@ namespace Raytracer.Calculus
         {
             Vect rayDirection = ray.Direction;
             double a = rayDirection.DotProduct(Normal);
+
             if(a.Equals(0.0d))
             {
-                //Ray is parallell to the plane (perpendicular) because angle between them
+                //Ray is parallel to the plane (perpendicular) because angle between them
                 return -1d;
             }
 
