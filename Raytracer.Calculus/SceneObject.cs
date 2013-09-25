@@ -1,13 +1,15 @@
-﻿namespace Raytracer.Calculus
+﻿using System;
+
+namespace Raytracer.Calculus
 {
     public class SceneObject
     {
         private Color _color;
-        public Color Color
+        public virtual Color Color
         {
             get
             {
-                return new Color(0, 0, 0, 0);
+                return _color;
             }
             protected set
             {
@@ -15,8 +17,9 @@
             }
         }
 
-        public double FindIntersection(Ray ray)
+        public virtual double FindIntersection(Ray ray)
         {
+            Console.WriteLine("Wrong find intersection");
             return 0d;
         }
     }

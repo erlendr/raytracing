@@ -20,5 +20,61 @@ namespace Raytracer.Calculus
             Radius = radius;
             Color = color;
         }
+
+        public override double FindIntersection(Ray ray)
+        {
+            Vect rayOrigin = ray.Origin;
+            double rayOriginX = rayOrigin.X;
+            double rayOriginY = rayOrigin.Y;
+            double rayOriginZ = rayOrigin.Z;
+
+            Vect rayDirection = ray.Direction;
+            double rayDirectionX = rayDirection.X;
+            double rayDirectionY = rayDirection.Y;
+            double rayDirectionZ = rayDirection.Z;
+
+            Vect sphereCenter = Center;
+            double sphereCenterX = sphereCenter.X;
+            double sphereCenterY = sphereCenter.Y;
+            double sphereCenterZ = sphereCenter.Z;
+
+            double a = 1; //normalized
+            double b = (2 * (rayOriginX - sphereCenterX) * rayDirectionX)
+                       + (2 * (rayOriginY - sphereCenterY) * rayDirectionY)
+                       + (2 * (rayOriginZ - sphereCenterZ) * rayDirectionZ);
+            double c = Math.Pow(rayOriginX - sphereCenterX, 2)
+                        + Math.Pow(rayOriginY - sphereCenterY, 2)
+                        + Math.Pow(rayOriginZ - sphereCenterZ, 2)
+                        - (Radius * Radius);
+
+            double discriminant = b*b - 4*c;
+
+            if(discriminant > 0)
+            {
+                // The ray intersects the sphere
+
+                //the first root
+                double root1 = ((-1d*b - Math.Sqrt(discriminant))/2) - 0.000001d;
+
+                if(root1 > 0)
+                {
+                    // the first root is the samallest positive root
+                    return root1;
+                }
+                
+                // the second root is the smalles positive root
+                double root2 = ((Math.Sqrt(discriminant) - b)/2) - 0.000001d;
+                return root2;
+            }
+            
+            // the ray missed the sphere
+            return -1;
+        }
+
+        public Vect GetNormalAt(Vect point)
+        {
+            Vect normalVect = point.Add(Center.Negative()).Normalize();
+            return normalVect;
+        }
     }
 }

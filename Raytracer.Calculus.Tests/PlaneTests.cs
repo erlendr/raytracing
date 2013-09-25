@@ -24,9 +24,9 @@ namespace Raytracer.Calculus.Tests
         // ReSharper restore InconsistentNaming
         {
             const double expectedResult = 1d;
-            var sut = new Plane();
-            var originO = new Vect(0d, 0d, 0d);
-            var yDirection = new Vect(1.0d, 0.0d, 0.0d);
+            var sut = new Plane(new Vect(0d, 1.0d, 0d), -1, new Color(0,0,0,0));
+            var originO = new Vect(0, 0, 0d);
+            var yDirection = new Vect(1d, 1d, 0.0d);
             var ray = new Ray(originO, yDirection);
             var response = sut.FindIntersection(ray);
             Assert.AreEqual(expectedResult, response);
