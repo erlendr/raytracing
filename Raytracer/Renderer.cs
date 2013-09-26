@@ -17,7 +17,7 @@ namespace Raytracer
         readonly Vect _x = new Vect(1, 0, 0);
         readonly Vect _y = new Vect(0, 1, 0);
         readonly Vect _z = new Vect(0, 0, 1);
-        double accuracy = 0.00000001;
+        private const double Accuracy = 0.00000001;
 
         public Renderer()
         {
@@ -32,8 +32,8 @@ namespace Raytracer
             var lightPosition = new Vect(-7, 10, -10);
             var light = new Light(lightPosition, whiteLight);
 
-            var sceneSphere = new Sphere(new Vect(0d, -4.0d, 0), 1.5d, prettyGreen);
-            var scenePlane = new Plane(_y, 1, maroon);
+            var sceneSphere = new Sphere(_o, 1.0d, prettyGreen);
+            var scenePlane = new Plane(_y, -1, maroon);
             var sceneObjects = new List<SceneObject>
                                    {
                                        sceneSphere,
@@ -67,13 +67,13 @@ namespace Raytracer
                             yamnt = ((height - y) + 0.5d) / height;
                         }
 
-                        Vect camRayOrigin = camera.CameraPosition;
-                        Vect camRayDirection =
+                        var camRayOrigin = camera.CameraPosition;
+                        var camRayDirection =
                             camera.CameraDirection.Add(
                                 camera.CameraRight.Mult(xamnt - 0.5d).Add(camera.CameraDown.Mult(yamnt - 0.5))).
                                 Normalize();
 
-                        Ray camRay = new Ray(camRayOrigin, camRayDirection);
+                        var camRay = new Ray(camRayOrigin, camRayDirection);
                         var intersections = new List<double>();
 
                         for (int i = 0; i < sceneObjects.Count; i++)
@@ -88,14 +88,14 @@ namespace Raytracer
                         var b = 0;
                         if (indexOfWinningObject > -1)
                         {
-                            //if (intersections[indexOfWinningObject] > accuracy)
-                            //{
+                            if (intersections[indexOfWinningObject] > Accuracy)
+                            {
                                 var winningObject = sceneObjects[indexOfWinningObject];
                        
                                 r = (int) Math.Round(winningObject.Color.Red*255);
                                 g = (int) Math.Round(winningObject.Color.Blue*255);
                                 b = (int) Math.Round(winningObject.Color.Green*255);
-                            //}
+                            }
                         }
                         
                         var color = BitmapColor.FromArgb(r, g, b);
@@ -103,6 +103,7 @@ namespace Raytracer
                     }
                 }
 
+                bitmap.RotateFlip(RotateFlipType.Rotate180FlipX);
                 bitmap.Save("output.bmp");
             }
         }

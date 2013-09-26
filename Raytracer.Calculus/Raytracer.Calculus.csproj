@@ -42,10 +42,10 @@
     <Compile Include="Camera.cs" />
     <Compile Include="Color.cs" />
     <Compile Include="Light.cs" />
-    <Compile Include="Plane.cs" />
-    <Compile Include="SceneObject.cs" />
+    <Compile Include="Objects\Plane.cs" />
+    <Compile Include="Objects\SceneObject.cs" />
     <Compile Include="Ray.cs" />
-    <Compile Include="Sphere.cs" />
+    <Compile Include="Objects\Sphere.cs" />
     <Compile Include="Vect.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
