@@ -43,7 +43,7 @@ namespace Raytracer.Calculus
             //Compute scalar distance from rayOrigin to circleOrigin using euclidean distance
             //double c = Math.Sqrt((eX-oX) + (eY-oY) + (eZ-oZ));
             var EO = new Vect(oX - eX, oY - eY, oZ - eZ);
-            double v = EO.DotProduct(V);
+            double v = EO.DotProduct(ray.Direction);
             var disc = (Radius * Radius) - ((EO.DotProduct(EO)) - (v * v));
             if (disc < 0)
             {
