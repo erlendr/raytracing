@@ -1,7 +1,7 @@
 Raytracer
 ---------
 
-Basic raytracer implemented in C#. Source: http://www.youtube.com/playlist?list=PLHm_I0tE5kKPPWXkTTtOn8fkcwEGZNETh
+Basic raytracer implemented in C#. Source: http://sourceforge.net/projects/rasterrain/
 
 ![Raytracing](https://dl.dropboxusercontent.com/u/1397694/output.png "Raytracing")
 
