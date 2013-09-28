@@ -30,11 +30,6 @@ namespace Raytracer.Calculus
             double eY = E.Y;
             double eZ = E.Z;
 
-            //Vect V = ray.Direction;
-            //double vX = V.X;
-            //double vY = V.Y;
-            //double vZ = V.Z;
-
             Vect sphereCenter = Center;
             double oX = sphereCenter.X;
             double oY = sphereCenter.Y;
@@ -106,7 +101,7 @@ namespace Raytracer.Calculus
             return -1;
         }
 
-        public Vect GetNormalAt(Vect point)
+        public override Vect GetNormalAt(Vect point)
         {
             Vect normalVect = point.Add(Center.Negative()).Normalize();
             return normalVect;
