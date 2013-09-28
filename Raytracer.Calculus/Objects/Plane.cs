@@ -21,7 +21,7 @@ namespace Raytracer.Calculus
             Color = color;
         }
 
-        public Vect GetNormalAt(Ray point)
+        public override Vect GetNormalAt(Vect point)
         {
             return Normal;
         }
