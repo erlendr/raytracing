@@ -108,7 +108,6 @@ namespace Raytracer
                                     var winningObjectNormal = winningObject.GetNormalAt(intersectionPoint);
                                     var angleBetweenNormalAndLightDirection =
                                         winningObjectNormal.DotProduct(lightDirectionFromIntersectionPoint);
-                                    Console.WriteLine("Angle:" + angleBetweenNormalAndLightDirection);
 
                                     if(angleBetweenNormalAndLightDirection < 0)
                                     {
