@@ -17,6 +17,8 @@ namespace Raytracer
         readonly Vect _x = new Vect(1, 0, 0);
         readonly Vect _y = new Vect(0, 1, 0);
         readonly Vect _z = new Vect(0, 0, 1);
+
+        private const double RgbMax = 255d;
         private const double AmbientCoefficient = 0.1d;
         private const double DiffuseCoefficient = 1d;
         private const double Accuracy = 0.00000001;
@@ -32,10 +34,10 @@ namespace Raytracer
             var black = new Color(0d, 0d, 0d, 0d);
             var maroon = new Color(0.5d, 0.25d, 0.25d, 0);
 
-            var lightPosition = new Vect(-7, 10, -10);
+            var lightPosition = new Vect(7, 5, -5);
             var light = new Light(lightPosition, whiteLight);
 
-            var sceneSphere = new Sphere(_o.Add(new Vect(1d, -0.5d, -1.5d)), 0.5d, red);
+            var sceneSphere = new Sphere(_o.Add(new Vect(1d, -0.5d, -1.5d)), 0.75d, red);
             var sceneSphere2 = new Sphere(_o, 1.0d, prettyGreen);
             var scenePlane = new Plane(_y, -1, maroon);
             var sceneObjects = new List<SceneObject>
@@ -88,51 +90,104 @@ namespace Raytracer
 
                         int indexOfWinningObject = WinningObjectIndex(intersections);
 
-                        var r = 0;
-                        var g = 0;
-                        var b = 0;
+                        var pixelColor = black;
+
                         if (indexOfWinningObject > -1)
                         {
-                            double shade = 1d;
-
                             if (intersections[indexOfWinningObject] > Accuracy)
                             {
                                 var winningObject = sceneObjects[indexOfWinningObject];
-                                if (winningObject.GetType().Name.Contains("Sphere"))
+                                
+                                //compute light ray
+                                var intersectionPoint =
+                                    camRayOrigin.Add(camRayDirection.Mult(intersections[indexOfWinningObject]));
+                                var lightRay = ComputeLightRayFromPoint(intersectionPoint, light);
+
+                                //Compute light ray intersection with all objects except winning object in scene
+                                bool isInShadow = LightRayIntersectsObject(sceneObjects, indexOfWinningObject, lightRay);
+
+                                double shade;
+                              
+                                if (!isInShadow)
                                 {
-                                    //compute light ray
-                                    var intersectionPoint =
-                                        camRayOrigin.Add(camRayDirection.Mult(intersections[indexOfWinningObject]));
-                                    var diffBtwIntersectionAndLightPos = new Vect(intersectionPoint.X - lightPosition.X, intersectionPoint.Y - lightPosition.Y, intersectionPoint.Z - lightPosition.Z);
-                                    var lightDirectionFromIntersectionPoint = diffBtwIntersectionAndLightPos.Negative().Normalize();
-                                    var winningObjectNormal = winningObject.GetNormalAt(intersectionPoint);
-                                    var angleBetweenNormalAndLightDirection =
-                                        winningObjectNormal.DotProduct(lightDirectionFromIntersectionPoint);
-
-                                    if(angleBetweenNormalAndLightDirection < 0)
-                                    {
-                                        angleBetweenNormalAndLightDirection = 0;
-                                    }
-
-                                    shade = (AmbientCoefficient +
-                                                          DiffuseCoefficient*angleBetweenNormalAndLightDirection);
+                                    //Object is not in shadow, compute lambert shading
+                                    shade = ComputeLambertShading(winningObject, intersectionPoint, lightRay);
                                 }
-                                
-                                
-                                r = (int) Math.Min(Math.Round(winningObject.Color.Red*shade*255), 255);
-                                g = (int) Math.Min(Math.Round(winningObject.Color.Blue*shade*255), 255);
-                                b = (int) Math.Min(Math.Round(winningObject.Color.Green*shade*255), 255);
+                                else
+                                {
+                                    //Object is in shadow, only return ambient coefficient
+                                    shade = AmbientCoefficient;
+                                }
+
+                                //Set pixel color using shade value
+                                pixelColor = ComputePixelColor(winningObject.Color, shade);
                             }
                         }
-                        
-                        var color = BitmapColor.FromArgb(r, g, b);
-                        bitmap.SetPixel(x, y, color);
+
+                        //Set bitmap color using pixel color
+                        SetBitmapPixel(bitmap, pixelColor, x, y);
                     }
                 }
 
                 bitmap.RotateFlip(RotateFlipType.Rotate180FlipX);
                 bitmap.Save("output.bmp");
             }
+        }
+
+        private static void SetBitmapPixel(Bitmap bitmap, Color pixelColor, int pixelPositionX, int pixelPositionY)
+        {
+            var color = BitmapColor.FromArgb(
+                (int) Math.Round(pixelColor.Red),
+                (int) Math.Round(pixelColor.Green),
+                (int) Math.Round(pixelColor.Blue));
+            bitmap.SetPixel(pixelPositionX, pixelPositionY, color);
+        }
+
+        private static Color ComputePixelColor(Color objectColor, double shade)
+        {
+            double r = Math.Min(objectColor.Red * shade * RgbMax, RgbMax);
+            double g = Math.Min(objectColor.Green * shade * RgbMax, RgbMax);
+            double b = Math.Min(objectColor.Blue * shade * RgbMax, RgbMax);
+            return new Color(r, g, b, 0d);
+        }
+
+        private static double ComputeLambertShading(SceneObject sceneObject, Vect intersectionPoint, Ray lightRay)
+        {
+            var winningObjectNormal = sceneObject.GetNormalAt(intersectionPoint);
+            var angleBetweenNormalAndLightDirection =
+                winningObjectNormal.DotProduct(lightRay.Direction);
+
+            if (angleBetweenNormalAndLightDirection < 0)
+            {
+                angleBetweenNormalAndLightDirection = 0;
+            }
+
+            //Lambert shading
+            return AmbientCoefficient +
+                   DiffuseCoefficient*angleBetweenNormalAndLightDirection;
+        }
+
+        private static bool LightRayIntersectsObject(List<SceneObject> sceneObjects, int indexOfWinningObject, Ray lightRay)
+        {
+            bool isInShadow = false;
+            for (int i = 0; i < sceneObjects.Count; i++)
+            {
+                if (i == indexOfWinningObject) continue;
+                if ((!(sceneObjects[i].FindIntersection(lightRay) > 0))) continue;
+                isInShadow = true;
+                break;
+            }
+            return isInShadow;
+        }
+
+        private static Ray ComputeLightRayFromPoint(Vect intersectionPoint, Light light)
+        {
+            var diffBtwIntersectionAndLightPos = new Vect(intersectionPoint.X - light.Position.X,
+                                                          intersectionPoint.Y - light.Position.Y,
+                                                          intersectionPoint.Z - light.Position.Z);
+            var lightDirectionFromIntersectionPoint = diffBtwIntersectionAndLightPos.Negative().Normalize();
+            var lightRay = new Ray(intersectionPoint, lightDirectionFromIntersectionPoint);
+            return lightRay;
         }
 
         private static int WinningObjectIndex(IReadOnlyList<double> intersections)
@@ -186,7 +241,7 @@ namespace Raytracer
 
         private Camera CreateCamera()
         {
-            var camPos = new Vect(15, -0.25, -4);
+            var camPos = new Vect(5d, 2.25d, -1d);
             var lookAt = new Vect(0, 0, 0);
             var diffBtw = new Vect(camPos.X - lookAt.X, camPos.Y - lookAt.Y, camPos.Z - lookAt.Z);
             var camDir = diffBtw.Negative().Normalize();
