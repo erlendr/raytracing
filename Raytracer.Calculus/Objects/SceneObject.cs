@@ -22,5 +22,10 @@ namespace Raytracer.Calculus
             Console.WriteLine("Wrong find intersection");
             return 0d;
         }
+
+        public virtual Vect GetNormalAt(Vect point)
+        {
+            return new Vect(0d, 0d, 0d);
+        }
     }
 }
