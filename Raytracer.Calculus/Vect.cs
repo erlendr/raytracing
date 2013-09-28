@@ -66,5 +66,10 @@ namespace Raytracer.Calculus
         {
             return new Vect(X *scalar, Y * scalar, Z * scalar);
         }
+
+        public override string ToString()
+        {
+            return String.Format("X:{0} Y:{1} Z:{2}", X, Y, Z);
+        }
     }
 }
