@@ -25,19 +25,9 @@ namespace Raytracer.Calculus
         {
             //See: http://www.cs.unc.edu/~rademach/xroads-RT/RTarticle.html#glas90
 
-            Vect E = ray.Origin;
-            double eX = E.X;
-            double eY = E.Y;
-            double eZ = E.Z;
-
-            Vect sphereCenter = Center;
-            double oX = sphereCenter.X;
-            double oY = sphereCenter.Y;
-            double oZ = sphereCenter.Z;
-
             //Compute scalar distance from rayOrigin to circleOrigin using euclidean distance
             //double c = Math.Sqrt((eX-oX) + (eY-oY) + (eZ-oZ));
-            var EO = new Vect(oX - eX, oY - eY, oZ - eZ);
+            var EO = new Vect(Center.X - ray.Origin.X, Center.Y - ray.Origin.Y, Center.Z - ray.Origin.Z);
             double v = EO.DotProduct(ray.Direction);
             var disc = (Radius * Radius) - ((EO.DotProduct(EO)) - (v * v));
             if (disc < 0)
@@ -49,56 +39,6 @@ namespace Raytracer.Calculus
             var dist = v - d;
             return dist;
 
-        }
-
-        public double FindIntersection2(Ray ray)
-        {
-            Vect rayOrigin = ray.Origin;
-            double rayOriginX = rayOrigin.X;
-            double rayOriginY = rayOrigin.Y;
-            double rayOriginZ = rayOrigin.Z;
-
-            Vect rayDirection = ray.Direction;
-            double rayDirectionX = rayDirection.X;
-            double rayDirectionY = rayDirection.Y;
-            double rayDirectionZ = rayDirection.Z;
-
-            Vect sphereCenter = Center;
-            double sphereCenterX = sphereCenter.X;
-            double sphereCenterY = sphereCenter.Y;
-            double sphereCenterZ = sphereCenter.Z;
-
-            double a = 1; //normalized
-            double b = (2 * (rayOriginX - sphereCenterX) * rayDirectionX)
-                       + (2 * (rayOriginY - sphereCenterY) * rayDirectionY)
-                       + (2 * (rayOriginZ - sphereCenterZ) * rayDirectionZ);
-            double c = Math.Pow(rayOriginX - sphereCenterX, 2)
-                        + Math.Pow(rayOriginY - sphereCenterY, 2)
-                        + Math.Pow(rayOriginZ - sphereCenterZ, 2)
-                        - (Radius * Radius);
-
-            double discriminant = b * b - 4 * c;
-
-            if (discriminant > 0)
-            {
-                // The ray intersects the sphere
-
-                //the first root
-                double root1 = ((-1d * b - Math.Sqrt(discriminant)) / 2) - 0.000001d;
-
-                if (root1 > 0)
-                {
-                    // the first root is the samallest positive root
-                    return root1;
-                }
-
-                // the second root is the smalles positive root
-                double root2 = ((Math.Sqrt(discriminant) - b) / 2) - 0.000001d;
-                return root2;
-            }
-
-            // the ray missed the sphere
-            return -1;
         }
 
         public override Vect GetNormalAt(Vect point)
