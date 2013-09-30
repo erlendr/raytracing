@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace Raytracer.Calculus
+namespace Raytracer.Calculus.Objects
 {
-    public class Sphere : SceneObject
+    public sealed class Sphere : SceneObject
     {
         public Vect Center { get; private set; }
         public Double Radius { get; private set; }

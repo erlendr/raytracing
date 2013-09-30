@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Raytracer.Calculus
+namespace Raytracer.Calculus.Objects
 {
     public class Plane : SceneObject
     {

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using Raytracer.Calculus;
+using Raytracer.Calculus.Objects;
 using BitmapColor = System.Drawing.Color;
 using Color = Raytracer.Calculus.Color;
 

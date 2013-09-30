@@ -1,4 +1,5 @@
 ﻿using NUnit.Framework;
+using Raytracer.Calculus.Objects;
 
 namespace Raytracer.Calculus.Tests
 {
