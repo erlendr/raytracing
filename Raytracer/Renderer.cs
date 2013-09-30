@@ -68,16 +68,16 @@ namespace Raytracer
                         {
                             for (int aay = 0; aay < aaSamples; aay++)
                             {
-                                //Instead of computing ray through centre of pixel (add 0.5 to x and y value), cast ray through centre of each sub pixel 
+                                //Instead of computing ray through centre of pixel, cast ray through centre of each sub pixel 
                                 if (bitmap.Width > bitmap.Height)
                                 {
-                                    xamnt = ((x + aax / (double)aaSamples - 1) / width) * aspectRatio - (((width - height) / (double)height) / 2d);
-                                    yamnt = ((height - y) + aax / (double)aaSamples - 2) / height;
+                                    xamnt = ((x + aax / (double)aaSamples) / width) * aspectRatio - (((width - height) / (double)height) / 2d);
+                                    yamnt = ((height - y) + aax / (double)aaSamples) / height;
                                 }
                                 else if (bitmap.Height > bitmap.Width)
                                 {
-                                    xamnt = (x + aax / (double)aaSamples - 1) / width;
-                                    yamnt = (((height - y) + aax / (double)aaSamples - 2) / height) / aspectRatio - (((height - width) / (double)width) / 2d);
+                                    xamnt = (x + aax / (double)aaSamples) / width;
+                                    yamnt = (((height - y) + aax / (double)aaSamples) / height) / aspectRatio - (((height - width) / (double)width) / 2d);
                                 }
                                 else
                                 {
@@ -131,7 +131,7 @@ namespace Raytracer
 
                         var finalColor = ComputeFinalColorFromSubpixelColors(subPixelColors);
 
-                        //Set bitmap color using pixel color
+                        //Set bitmap color using final averaged pixel color
                         SetBitmapPixel(bitmap, finalColor, x, y);
                     }
                 }
