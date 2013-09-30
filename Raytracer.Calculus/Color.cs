@@ -1,4 +1,6 @@
-﻿namespace Raytracer.Calculus
+﻿using System;
+
+namespace Raytracer.Calculus
 {
     public class Color
     {
@@ -6,6 +8,8 @@
         public double Green { get; set; }
         public double Blue { get; set; }
         public double Special { get; set; }
+
+        const double RgbMax = 255d;
 
         public Color()
         {
@@ -20,6 +24,14 @@
             Green = green;
             Blue = blue;
             Special = special;
+        }
+
+        public static Color ComputePixelColor(Color objectColor, double shade)
+        {
+            double r = Math.Min(objectColor.Red * shade * RgbMax, RgbMax);
+            double g = Math.Min(objectColor.Green * shade * RgbMax, RgbMax);
+            double b = Math.Min(objectColor.Blue * shade * RgbMax, RgbMax);
+            return new Color(r, g, b, 0d);
         }
     }
 }

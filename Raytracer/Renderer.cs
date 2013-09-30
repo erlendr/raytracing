@@ -20,9 +20,7 @@ namespace Raytracer
         readonly Vect _y = new Vect(0, 1, 0);
         readonly Vect _z = new Vect(0, 0, 1);
 
-        private const double RgbMax = 255d;
         private const double AmbientCoefficient = 0.1d;
-        private const double DiffuseCoefficient = 1d;
         private const double Accuracy = 0.00000001;
 
         public Renderer()
@@ -44,9 +42,10 @@ namespace Raytracer
             
             var lambertMaterial2 = new LambertMaterial(1d, AmbientCoefficient);
             var sceneSphere2 = new Sphere(_o, 1.0d, prettyGreen, lambertMaterial2);
-            
-            var lambertMaterial3 = new LambertMaterial(1d, AmbientCoefficient);
-            var scenePlane = new Plane(_y, -1, maroon, lambertMaterial3);          
+
+            var planeMaterial = new LambertMaterial(1d, AmbientCoefficient);
+            //var planeMaterial = new FlatMaterial(AmbientCoefficient);
+            var scenePlane = new Plane(_y, -1, gray, planeMaterial);          
 
             var sceneObjects = new List<SceneObject>
                                    {
@@ -112,21 +111,9 @@ namespace Raytracer
                                         //Compute light ray intersection with all objects except winning object in scene
                                         bool isInShadow = LightRayIntersectsObject(sceneObjects, indexOfWinningObject, lightRay);
 
-                                        double shade;
-
-                                        if (!isInShadow)
-                                        {
-                                            //Object is not in shadow, compute material shading
-                                            shade = winningObject.Material.ComputeShade(intersectionPoint, lightRay);
-                                        }
-                                        else
-                                        {
-                                            //Object is in shadow, only return ambient coefficient
-                                            shade = AmbientCoefficient;
-                                        }
-
                                         //Set pixel color using shade value
-                                        subPixelColors.Add(ComputePixelColor(winningObject.Color, shade));
+                                        subPixelColors.Add(winningObject.Material.ComputeColor(intersectionPoint,
+                                                                                               lightRay, isInShadow));
                                     }
                                 }
                                 else
@@ -202,14 +189,6 @@ namespace Raytracer
                 (int) Math.Round(pixelColor.Green),
                 (int) Math.Round(pixelColor.Blue));
             bitmap.SetPixel(pixelPositionX, pixelPositionY, color);
-        }
-
-        private static Color ComputePixelColor(Color objectColor, double shade)
-        {
-            double r = Math.Min(objectColor.Red * shade * RgbMax, RgbMax);
-            double g = Math.Min(objectColor.Green * shade * RgbMax, RgbMax);
-            double b = Math.Min(objectColor.Blue * shade * RgbMax, RgbMax);
-            return new Color(r, g, b, 0d);
         }
 
         private static bool LightRayIntersectsObject(List<SceneObject> sceneObjects, int indexOfWinningObject, Ray lightRay)

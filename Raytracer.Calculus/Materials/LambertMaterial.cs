@@ -9,13 +9,32 @@ namespace Raytracer.Calculus.Materials
         readonly double _diffuseCoefficient;
         public override SceneObject SceneObject { get; set; }
 
-        public LambertMaterial(double diffuseCoefficient, double ambientCoefficient)
+       public LambertMaterial(double diffuseCoefficient, double ambientCoefficient)
         {
             _diffuseCoefficient = diffuseCoefficient;
             _ambientCoefficient = ambientCoefficient;
         }
 
-        public override double ComputeShade(Vect intersectionPoint, Ray lightRay)
+       public override Color ComputeColor(Vect intersectionPoint, Ray lightRay, bool isInShadow)
+       {
+           double shade;
+
+           if (!isInShadow)
+           {
+               //Object is not in shadow, compute material shading
+               shade = ComputeShade(intersectionPoint, lightRay);
+           }
+           else
+           {
+               //Object is in shadow, only return ambient coefficient
+               shade = _ambientCoefficient;
+           }
+
+           //Set pixel color using shade value
+           return (Color.ComputePixelColor(SceneObject.Color, shade));
+       }
+
+        private double ComputeShade(Vect intersectionPoint, Ray lightRay)
         {
             var angleBetweenNormalAndLightDirection = ComputeCosineAngle(SceneObject, intersectionPoint, lightRay);
 
