@@ -52,6 +52,7 @@ namespace Raytracer
             const int height = 500;
             double aspectRatio = (double) width / (double) height;
             double xamnt, yamnt;
+            const int aaSamples = 2; //Number of AA samples. 1 = no subsampling, 2 = 2x AA, 3 = 3x AA, etc.
 
             using (var bitmap = new Bitmap(width, height, PixelFormat.Format24bppRgb))
             {
@@ -59,80 +60,132 @@ namespace Raytracer
                 {
                     for (var y = 0; y < bitmap.Height; y++)
                     {
-                        if(bitmap.Width > bitmap.Height)
+                        //Antialiasing - Compute sub pixel colors
+                        var subPixelColors = new List<Color>();
+                        
+                        //Iterate over sub pixels
+                        for (int aax = 0; aax < aaSamples; aax++)
                         {
-                            xamnt = ((x + 0.5d) / width) * aspectRatio - (((width - height) / (double) height) / 2d);
-                            yamnt = ((height - y) + 0.5d) / height;
-                        }
-                        else if(bitmap.Height > bitmap.Width)
-                        {
-                            xamnt = (x + 0.5d)/width;
-                            yamnt = (((height - y) + 0.5d) / height) / aspectRatio - (((height - width)/(double) width)/2d);
-                        }
-                        else
-                        {
-                            xamnt = (x + 0.5d)/width;
-                            yamnt = ((height - y) + 0.5d) / height;
-                        }
-
-                        var camRayOrigin = camera.CameraPosition;
-                        var camRayDirection =
-                            camera.CameraDirection.Add(
-                                camera.CameraRight.Mult(xamnt - 0.5d).Add(camera.CameraDown.Mult(yamnt - 0.5d))).
-                                Normalize();
-
-                        var camRay = new Ray(camRayOrigin, camRayDirection);
-                        var intersections = new List<double>();
-
-                        for (int i = 0; i < sceneObjects.Count; i++)
-                        {
-                            intersections.Add(sceneObjects[i].FindIntersection(camRay));
-                        }
-
-                        int indexOfWinningObject = WinningObjectIndex(intersections);
-
-                        var pixelColor = black;
-
-                        if (indexOfWinningObject > -1)
-                        {
-                            if (intersections[indexOfWinningObject] > Accuracy)
+                            for (int aay = 0; aay < aaSamples; aay++)
                             {
-                                var winningObject = sceneObjects[indexOfWinningObject];
-                                
-                                //compute light ray
-                                var intersectionPoint =
-                                    camRayOrigin.Add(camRayDirection.Mult(intersections[indexOfWinningObject]));
-                                var lightRay = ComputeLightRayFromPoint(intersectionPoint, light);
-
-                                //Compute light ray intersection with all objects except winning object in scene
-                                bool isInShadow = LightRayIntersectsObject(sceneObjects, indexOfWinningObject, lightRay);
-
-                                double shade;
-                              
-                                if (!isInShadow)
+                                //Instead of computing ray through centre of pixel (add 0.5 to x and y value), cast ray through centre of each sub pixel 
+                                if (bitmap.Width > bitmap.Height)
                                 {
-                                    //Object is not in shadow, compute lambert shading
-                                    shade = ComputeLambertShading(winningObject, intersectionPoint, lightRay);
+                                    xamnt = ((x + aax / (double)aaSamples - 1) / width) * aspectRatio - (((width - height) / (double)height) / 2d);
+                                    yamnt = ((height - y) + aax / (double)aaSamples - 2) / height;
+                                }
+                                else if (bitmap.Height > bitmap.Width)
+                                {
+                                    xamnt = (x + aax / (double)aaSamples - 1) / width;
+                                    yamnt = (((height - y) + aax / (double)aaSamples - 2) / height) / aspectRatio - (((height - width) / (double)width) / 2d);
                                 }
                                 else
                                 {
-                                    //Object is in shadow, only return ambient coefficient
-                                    shade = AmbientCoefficient;
+                                    xamnt = (x + aax / (double) aaSamples) / width;
+                                    yamnt = ((height - y) + aay / (double) aaSamples) / height;
                                 }
 
-                                //Set pixel color using shade value
-                                pixelColor = ComputePixelColor(winningObject.Color, shade);
+                                var camRay = ComputeCamRay(camera, xamnt, yamnt);
+
+                                var intersections = ComputeRayObjectIntersections(sceneObjects, camRay);
+
+                                int indexOfWinningObject = WinningObjectIndex(intersections);
+
+                                if (indexOfWinningObject > -1)
+                                {
+                                    if (intersections[indexOfWinningObject] > Accuracy)
+                                    {
+                                        var winningObject = sceneObjects[indexOfWinningObject];
+
+                                        //compute light ray
+                                        var intersectionPoint =
+                                            camRay.Origin.Add(camRay.Direction.Mult(intersections[indexOfWinningObject]));
+                                        var lightRay = ComputeLightRayFromPoint(intersectionPoint, light);
+
+                                        //Compute light ray intersection with all objects except winning object in scene
+                                        bool isInShadow = LightRayIntersectsObject(sceneObjects, indexOfWinningObject, lightRay);
+
+                                        double shade;
+
+                                        if (!isInShadow)
+                                        {
+                                            //Object is not in shadow, compute lambert shading
+                                            shade = ComputeLambertShading(winningObject, intersectionPoint, lightRay);
+                                        }
+                                        else
+                                        {
+                                            //Object is in shadow, only return ambient coefficient
+                                            shade = AmbientCoefficient;
+                                        }
+
+                                        //Set pixel color using shade value
+                                        subPixelColors.Add(ComputePixelColor(winningObject.Color, shade));
+                                    }
+                                }
+                                else
+                                {
+                                    subPixelColors.Add(black);
+                                }
                             }
                         }
 
+                        var finalColor = ComputeFinalColorFromSubpixelColors(subPixelColors);
+
                         //Set bitmap color using pixel color
-                        SetBitmapPixel(bitmap, pixelColor, x, y);
+                        SetBitmapPixel(bitmap, finalColor, x, y);
                     }
                 }
 
                 bitmap.RotateFlip(RotateFlipType.Rotate180FlipX);
                 bitmap.Save("output.bmp");
             }
+        }
+
+        private static List<double> ComputeRayObjectIntersections(List<SceneObject> sceneObjects, Ray camRay)
+        {
+            var intersections = new List<double>();
+
+            for (int i = 0; i < sceneObjects.Count; i++)
+            {
+                intersections.Add(sceneObjects[i].FindIntersection(camRay));
+            }
+            return intersections;
+        }
+
+        private static Ray ComputeCamRay(Camera camera, double xamnt, double yamnt)
+        {
+            const double offset = 0.5d;
+
+            var camRayDirection =
+                camera.CameraDirection.Add(
+                    camera.CameraRight.Mult(xamnt - offset).Add(camera.CameraDown.Mult(yamnt - offset))).
+                    Normalize();
+
+            var camRay = new Ray(camera.CameraPosition, camRayDirection);
+            return camRay;
+        }
+
+        private static Color ComputeFinalColorFromSubpixelColors(List<Color> subPixelColors)
+        {
+            double totalRed = 0, totalGreen = 0, totalBlue = 0;
+
+            //sum all color components
+            for (int i = 0; i < subPixelColors.Count; i++)
+            {
+                totalRed = totalRed + subPixelColors[i].Red;
+                totalGreen = totalGreen + subPixelColors[i].Green;
+                totalBlue = totalBlue + subPixelColors[i].Blue;
+            }
+
+            //final color is average of each color component
+            var finalColor = new Color
+                                 {
+                                     Red = totalRed/subPixelColors.Count,
+                                     Green = totalGreen/subPixelColors.Count,
+                                     Blue = totalBlue/subPixelColors.Count
+                                 };
+
+            return finalColor;
         }
 
         private static void SetBitmapPixel(Bitmap bitmap, Color pixelColor, int pixelPositionX, int pixelPositionY)
