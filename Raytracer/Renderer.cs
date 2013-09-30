@@ -117,7 +117,7 @@ namespace Raytracer
                                         if (!isInShadow)
                                         {
                                             //Object is not in shadow, compute material shading
-                                            shade = winningObject.Material.ComputeShade(winningObject, intersectionPoint, lightRay);
+                                            shade = winningObject.Material.ComputeShade(intersectionPoint, lightRay);
                                         }
                                         else
                                         {

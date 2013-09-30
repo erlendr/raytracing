@@ -21,6 +21,7 @@ namespace Raytracer.Calculus.Objects
             Distance = distance;
             Color = color;
             Material = material;
+            Material.SceneObject = this;
         }
 
         public override Vect GetNormalAt(Vect point)

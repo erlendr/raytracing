@@ -4,6 +4,7 @@ namespace Raytracer.Calculus.Materials
 {
     public abstract class Material
     {
-        public abstract double ComputeShade(SceneObject sceneObject, Vect vect, Ray ray);
+        public abstract double ComputeShade(Vect vect, Ray ray);
+        public abstract SceneObject SceneObject { get; set; }
     }
 }

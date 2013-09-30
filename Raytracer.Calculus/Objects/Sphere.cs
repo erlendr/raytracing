@@ -21,6 +21,7 @@ namespace Raytracer.Calculus.Objects
             Radius = radius;
             Color = color;
             Material = material;
+            Material.SceneObject = this;
         }
 
         public override double FindIntersection(Ray ray)
