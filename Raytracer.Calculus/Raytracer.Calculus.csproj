@@ -42,6 +42,8 @@
     <Compile Include="Camera.cs" />
     <Compile Include="Color.cs" />
     <Compile Include="Light.cs" />
+    <Compile Include="Materials\LambertMaterial.cs" />
+    <Compile Include="Materials\Material.cs" />
     <Compile Include="Objects\Plane.cs" />
     <Compile Include="Objects\SceneObject.cs" />
     <Compile Include="Ray.cs" />

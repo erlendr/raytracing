@@ -1,10 +1,12 @@
 ﻿using System;
+using Raytracer.Calculus.Materials;
 
 namespace Raytracer.Calculus.Objects
 {
     public abstract class SceneObject
     {
         public virtual Color Color { get; protected set; }
+        public virtual Material Material { get; set; }
 
         public virtual double FindIntersection(Ray ray)
         {

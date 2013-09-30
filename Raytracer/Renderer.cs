@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using Raytracer.Calculus;
+using Raytracer.Calculus.Materials;
 using Raytracer.Calculus.Objects;
 using BitmapColor = System.Drawing.Color;
 using Color = Raytracer.Calculus.Color;
@@ -38,9 +39,15 @@ namespace Raytracer
             var lightPosition = new Vect(7, 5, -5);
             var light = new Light(lightPosition, whiteLight);
 
-            var sceneSphere = new Sphere(_o.Add(new Vect(1d, -0.5d, -1.5d)), 0.75d, red);
-            var sceneSphere2 = new Sphere(_o, 1.0d, prettyGreen);
-            var scenePlane = new Plane(_y, -1, maroon);
+            var lambertMaterial1 = new LambertMaterial(1d, AmbientCoefficient);
+            var sceneSphere = new Sphere(_o.Add(new Vect(1d, -0.5d, -1.5d)), 0.75d, red, lambertMaterial1);
+            
+            var lambertMaterial2 = new LambertMaterial(1d, AmbientCoefficient);
+            var sceneSphere2 = new Sphere(_o, 1.0d, prettyGreen, lambertMaterial2);
+            
+            var lambertMaterial3 = new LambertMaterial(1d, AmbientCoefficient);
+            var scenePlane = new Plane(_y, -1, maroon, lambertMaterial3);          
+
             var sceneObjects = new List<SceneObject>
                                    {
                                        sceneSphere,
@@ -109,8 +116,8 @@ namespace Raytracer
 
                                         if (!isInShadow)
                                         {
-                                            //Object is not in shadow, compute lambert shading
-                                            shade = ComputeLambertShading(winningObject, intersectionPoint, lightRay);
+                                            //Object is not in shadow, compute material shading
+                                            shade = winningObject.Material.ComputeShade(winningObject, intersectionPoint, lightRay);
                                         }
                                         else
                                         {
@@ -203,22 +210,6 @@ namespace Raytracer
             double g = Math.Min(objectColor.Green * shade * RgbMax, RgbMax);
             double b = Math.Min(objectColor.Blue * shade * RgbMax, RgbMax);
             return new Color(r, g, b, 0d);
-        }
-
-        private static double ComputeLambertShading(SceneObject sceneObject, Vect intersectionPoint, Ray lightRay)
-        {
-            var winningObjectNormal = sceneObject.GetNormalAt(intersectionPoint);
-            var angleBetweenNormalAndLightDirection =
-                winningObjectNormal.DotProduct(lightRay.Direction);
-
-            if (angleBetweenNormalAndLightDirection < 0)
-            {
-                angleBetweenNormalAndLightDirection = 0;
-            }
-
-            //Lambert shading
-            return AmbientCoefficient +
-                   DiffuseCoefficient*angleBetweenNormalAndLightDirection;
         }
 
         private static bool LightRayIntersectsObject(List<SceneObject> sceneObjects, int indexOfWinningObject, Ray lightRay)

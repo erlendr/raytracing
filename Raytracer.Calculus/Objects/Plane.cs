@@ -1,4 +1,5 @@
 ﻿using System;
+using Raytracer.Calculus.Materials;
 
 namespace Raytracer.Calculus.Objects
 {
@@ -14,11 +15,12 @@ namespace Raytracer.Calculus.Objects
             Color = new Color(0.5d, 0.5d, 0.5d, 0);
         }
 
-        public Plane(Vect normal, double distance, Color color)
+        public Plane(Vect normal, double distance, Color color, Material material)
         {
             Normal = normal;
             Distance = distance;
             Color = color;
+            Material = material;
         }
 
         public override Vect GetNormalAt(Vect point)

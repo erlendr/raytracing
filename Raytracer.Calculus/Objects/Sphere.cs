@@ -1,4 +1,5 @@
 ﻿using System;
+using Raytracer.Calculus.Materials;
 
 namespace Raytracer.Calculus.Objects
 {
@@ -14,11 +15,12 @@ namespace Raytracer.Calculus.Objects
             Color = new Color(0.5d, 0.5d, 0.5d, 0);
         }
 
-        public Sphere(Vect center, double radius, Color color)
+        public Sphere(Vect center, double radius, Color color, Material material)
         {
             Center = center;
             Radius = radius;
             Color = color;
+            Material = material;
         }
 
         public override double FindIntersection(Ray ray)

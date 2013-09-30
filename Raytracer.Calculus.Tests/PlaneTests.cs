@@ -25,7 +25,8 @@ namespace Raytracer.Calculus.Tests
         // ReSharper restore InconsistentNaming
         {
             const double expectedResult = -1d;
-            var sut = new Plane(new Vect(0d, 1.0d, 0d), -1, new Color(0,0,0,0));
+
+            var sut = new Plane(new Vect(0d, 1.0d, 0d), -1, new Color(0,0,0,0), null);
             var originO = new Vect(0, 0, 0d);
             var yDirection = new Vect(0, 1d, 0.0d);
             var ray = new Ray(originO, yDirection);
