@@ -2,7 +2,7 @@
 
 namespace Raytracer.Calculus.Objects
 {
-    public class Plane : SceneObject
+    public sealed class Plane : SceneObject
     {
         public Vect Normal { get; private set; }
         public Double Distance { get; private set; }

@@ -2,20 +2,9 @@
 
 namespace Raytracer.Calculus.Objects
 {
-    public class SceneObject
+    public abstract class SceneObject
     {
-        private Color _color;
-        public virtual Color Color
-        {
-            get
-            {
-                return _color;
-            }
-            protected set
-            {
-                _color = value;
-            }
-        }
+        public virtual Color Color { get; protected set; }
 
         public virtual double FindIntersection(Ray ray)
         {
