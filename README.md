@@ -11,3 +11,5 @@ Basic raytracer implemented in C#. Source: http://sourceforge.net/projects/raste
 ##28.09.13: Shadows and lambert for planes now working!
 ![Raytracing with lambert shading and shadows](https://dl.dropboxusercontent.com/u/1397694/output-lambert-shadow.png "Raytracing with lambert shading and shadows")
 
+##30.09.13: Anti-aliasing implemented
+![AA](https://dl.dropboxusercontent.com/u/1397694/output-4xaa.png "AA")
