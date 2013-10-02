@@ -34,7 +34,7 @@ namespace Raytracer.Calculus.Materials
            return (Color.ComputePixelColor(SceneObject.Color, shade));
        }
 
-        private double ComputeShade(Vect intersectionPoint, Ray lightRay)
+        protected double ComputeShade(Vect intersectionPoint, Ray lightRay)
         {
             var angleBetweenNormalAndLightDirection = ComputeCosineAngle(SceneObject, intersectionPoint, lightRay);
 
