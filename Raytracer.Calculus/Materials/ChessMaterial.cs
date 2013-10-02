@@ -15,11 +15,11 @@ namespace Raytracer.Calculus.Materials
         }
 
         public override Color ComputeColor(Vect intersectionPoint, Ray lightRay, bool isInShadow)
-       {
-           double shade = !isInShadow ? 1 : _ambientCoefficient;
+        {
+            double shade = !isInShadow ? 1 : _ambientCoefficient;
 
-           //Set pixel color using shade value
-           return (Color.ComputePixelColor(SceneObject.Color, shade));
-       }
+            //Set pixel color using shade value
+            return (Color.ComputePixelColor(SceneObject.Color, shade));
+        }
     }
 }
