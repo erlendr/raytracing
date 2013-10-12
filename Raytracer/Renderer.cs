@@ -20,10 +20,10 @@ namespace Raytracer
         readonly Vect _y = new Vect(0, 1, 0);
         readonly Vect _z = new Vect(0, 0, 1);
 
-        private const int RayTraceDepth = 1;
+        private const int RayTraceDepth = 10;
 
         private const double AmbientCoefficient = 0.1d;
-        private const double Accuracy = 0.00000001;
+        private const double Accuracy = 0.00000000000001;
 
         public Renderer()
         {
@@ -145,6 +145,7 @@ namespace Raytracer
                         var winningObjectNormal = winningObject.GetNormalAt(intersectionPoint);
                         var reflectionRay = ComputeReflectionRay(ray, intersectionPoint, winningObjectNormal);
                         depth++;
+                        //Compute color for reflection ray by recursion
                         reflectionColor = TraceRay(sceneObjects, reflectionRay, light, depth);
                     }
 
@@ -165,7 +166,7 @@ namespace Raytracer
         private static Ray ComputeReflectionRay(Ray incomingRay, Vect intersectionPoint, Vect normalDirection)
         {
             var reflectionRayAngle = -incomingRay.Direction.DotProduct(normalDirection);
-            var reflectionRayDirection = incomingRay.Direction.Add(normalDirection.Mult(2 * reflectionRayAngle));
+            var reflectionRayDirection = incomingRay.Direction.Add(normalDirection.Mult(2d * reflectionRayAngle));
             return new Ray(intersectionPoint, reflectionRayDirection);
         }
 
