@@ -20,6 +20,8 @@ namespace Raytracer
         readonly Vect _y = new Vect(0, 1, 0);
         readonly Vect _z = new Vect(0, 0, 1);
 
+        private const int RayTraceDepth = 1;
+
         private const double AmbientCoefficient = 0.1d;
         private const double Accuracy = 0.00000001;
 
@@ -95,7 +97,7 @@ namespace Raytracer
                                 var camRay = ComputeCamRay(camera, xamnt, yamnt);
 
                                 //Determine color for subpixel and add to array of subpixel colors
-                                subPixelColors.Add(TraceRay(sceneObjects, camRay, light));
+                                subPixelColors.Add(TraceRay(sceneObjects, camRay, light, 0));
                             }
                         }
 
@@ -111,9 +113,11 @@ namespace Raytracer
             }
         }
 
-        private static Color TraceRay(List<SceneObject> sceneObjects, Ray ray, Light light)
+        private static Color TraceRay(List<SceneObject> sceneObjects, Ray ray, Light light, int depth)
         {
             var color = new Color(); // Black is default color for ray
+            var reflectionColor = new Color();
+            var refractionColor = new Color();
 
             //Compute intersections (distances) between ray and scene objects
             var intersections = ComputeRayObjectIntersections(sceneObjects, ray);
@@ -130,19 +134,39 @@ namespace Raytracer
                     //Fetch winning object from scene objects
                     var winningObject = sceneObjects[indexOfWinningObject];
 
-                    //compute light ray
                     var intersectionPoint =
                         ray.Origin.Add(ray.Direction.Mult(intersections[indexOfWinningObject]));
+
+                    //Determine if winning object is reflective
+                    var isReflective = winningObject.Material.IsReflective;
+                    if(isReflective && depth < RayTraceDepth)
+                    {
+                        //Compute reflection ray
+                        var winningObjectNormal = winningObject.GetNormalAt(intersectionPoint);
+                        var reflectionRay = ComputeReflectionRay(ray, intersectionPoint, winningObjectNormal);
+                        depth++;
+                        reflectionColor = TraceRay(sceneObjects, reflectionRay, light, depth);
+                    }
+
+                    //compute light ray
                     var lightRay = ComputeLightRayFromPoint(intersectionPoint, light);
 
                     //Compute light ray intersection with all objects except winning object in scene
-                    bool isInShadow = LightRayIntersectsObject(sceneObjects, indexOfWinningObject, lightRay);
+                    var isInShadow = LightRayIntersectsObject(sceneObjects, indexOfWinningObject, lightRay);
 
                     //Set pixel color using shade value
-                    color = winningObject.Material.ComputeColor(intersectionPoint, lightRay, isInShadow);
+                    var materialColor = winningObject.Material.ComputeColor(intersectionPoint, lightRay, isInShadow);
+                    color = isReflective ? materialColor.Average(reflectionColor) : materialColor;
                 }
             }
             return color;
+        }
+
+        private static Ray ComputeReflectionRay(Ray incomingRay, Vect intersectionPoint, Vect normalDirection)
+        {
+            var reflectionRayAngle = -incomingRay.Direction.DotProduct(normalDirection);
+            var reflectionRayDirection = incomingRay.Direction.Add(normalDirection.Mult(2 * reflectionRayAngle));
+            return new Ray(intersectionPoint, reflectionRayDirection);
         }
 
         private static List<double> ComputeRayObjectIntersections(List<SceneObject> sceneObjects, Ray camRay)

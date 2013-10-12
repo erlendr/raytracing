@@ -7,6 +7,8 @@ namespace Raytracer.Calculus.Materials
     {
         readonly double _ambientCoefficient;
         public override SceneObject SceneObject { get; set; }
+        public override bool IsReflective { get; set; }
+        public override bool IsRefractive { get; set; }
 
         public FlatMaterial(double ambientCoefficient)
         {

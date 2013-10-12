@@ -8,14 +8,18 @@ namespace Raytracer.Calculus.Materials
         readonly double _ambientCoefficient;
         readonly double _diffuseCoefficient;
         public override SceneObject SceneObject { get; set; }
+        public override sealed bool IsRefractive { get; set; }
+        public override sealed bool IsReflective { get; set; }
 
        public LambertMaterial(double diffuseCoefficient, double ambientCoefficient)
         {
             _diffuseCoefficient = diffuseCoefficient;
             _ambientCoefficient = ambientCoefficient;
+           IsReflective = true;
+           IsRefractive = true;
         }
 
-       public override Color ComputeColor(Vect intersectionPoint, Ray lightRay, bool isInShadow)
+        public override Color ComputeColor(Vect intersectionPoint, Ray lightRay, bool isInShadow)
        {
            double shade;
 

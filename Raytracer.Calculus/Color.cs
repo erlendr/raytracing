@@ -33,5 +33,45 @@ namespace Raytracer.Calculus
             double b = Math.Min(objectColor.Blue * shade * RgbMax, RgbMax);
             return new Color(r, g, b, 0d);
         }
+
+        public static Color Add(Color color1, Color color2)
+        {
+            return color1 + color2;
+        }
+
+        public static Color operator +(Color color1, Color color2)
+        {
+            return new Color(
+                color1.Red + color2.Red,
+                color1.Green + color2.Green,
+                color1.Blue + color2.Blue,
+                color1.Special
+                );
+        }
+
+        public static Color Multiply(Color color1, Color color2)
+        {
+            return color1 * color2;
+        }
+
+        public static Color operator *(Color color1, Color color2)
+        {
+            return new Color(
+                color1.Red * color2.Red,
+                color1.Green * color2.Green,
+                color1.Blue * color2.Blue,
+                color1.Special
+                );
+        }
+
+        public Color Average(Color color)
+        {
+            return new Color(
+                (Red + color.Red) / 2,
+                (Green + color.Green) / 2,
+                (Blue + color.Blue) / 2,
+                Special
+                );
+        }
     }
 }
