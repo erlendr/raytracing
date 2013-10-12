@@ -58,7 +58,7 @@ namespace Raytracer
             const int height = 500;
             double aspectRatio = (double) width / (double) height;
             double xamnt, yamnt;
-            const int aaSamples = 2; //Number of AA samples. 1 = no subsampling, 2 = 2x AA, 3 = 3x AA, etc.
+            const int aaSamples = 1; //Number of AA samples. 1 = no subsampling, 2 = 2x AA, 3 = 3x AA, etc.
 
             using (var bitmap = new Bitmap(width, height, PixelFormat.Format24bppRgb))
             {
@@ -91,35 +91,13 @@ namespace Raytracer
                                     yamnt = ((height - y) + aay / (double) aaSamples) / height;
                                 }
 
+                                var subPixelColor = black;
+                                
                                 var camRay = ComputeCamRay(camera, xamnt, yamnt);
 
-                                var intersections = ComputeRayObjectIntersections(sceneObjects, camRay);
+                                subPixelColor = TraceRay(sceneObjects, camRay, light);
 
-                                int indexOfWinningObject = WinningObjectIndex(intersections);
-
-                                if (indexOfWinningObject > -1)
-                                {
-                                    if (intersections[indexOfWinningObject] > Accuracy)
-                                    {
-                                        var winningObject = sceneObjects[indexOfWinningObject];
-
-                                        //compute light ray
-                                        var intersectionPoint =
-                                            camRay.Origin.Add(camRay.Direction.Mult(intersections[indexOfWinningObject]));
-                                        var lightRay = ComputeLightRayFromPoint(intersectionPoint, light);
-
-                                        //Compute light ray intersection with all objects except winning object in scene
-                                        bool isInShadow = LightRayIntersectsObject(sceneObjects, indexOfWinningObject, lightRay);
-
-                                        //Set pixel color using shade value
-                                        subPixelColors.Add(winningObject.Material.ComputeColor(intersectionPoint,
-                                                                                               lightRay, isInShadow));
-                                    }
-                                }
-                                else
-                                {
-                                    subPixelColors.Add(black);
-                                }
+                                subPixelColors.Add(subPixelColor);
                             }
                         }
 
@@ -133,6 +111,40 @@ namespace Raytracer
                 bitmap.RotateFlip(RotateFlipType.Rotate180FlipX);
                 bitmap.Save("output.bmp");
             }
+        }
+
+        private static Color TraceRay(List<SceneObject> sceneObjects, Ray ray, Light light)
+        {
+            var color = new Color(); // Black is default color for ray
+
+            //Compute intersections (distances) between ray and scene objects
+            var intersections = ComputeRayObjectIntersections(sceneObjects, ray);
+
+            //Find index of winning object from all intersections
+            int indexOfWinningObject = WinningObjectIndex(intersections);
+
+            //If winning object index found, compute color
+            if (indexOfWinningObject > -1)
+            {
+                // Determine if distance to winning object is above accuracy constant, compute color
+                if (intersections[indexOfWinningObject] > Accuracy)
+                {
+                    //Fetch winning object from scene objects
+                    var winningObject = sceneObjects[indexOfWinningObject];
+
+                    //compute light ray
+                    var intersectionPoint =
+                        ray.Origin.Add(ray.Direction.Mult(intersections[indexOfWinningObject]));
+                    var lightRay = ComputeLightRayFromPoint(intersectionPoint, light);
+
+                    //Compute light ray intersection with all objects except winning object in scene
+                    bool isInShadow = LightRayIntersectsObject(sceneObjects, indexOfWinningObject, lightRay);
+
+                    //Set pixel color using shade value
+                    color = winningObject.Material.ComputeColor(intersectionPoint, lightRay, isInShadow);
+                }
+            }
+            return color;
         }
 
         private static List<double> ComputeRayObjectIntersections(List<SceneObject> sceneObjects, Ray camRay)
