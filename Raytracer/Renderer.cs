@@ -91,13 +91,11 @@ namespace Raytracer
                                     yamnt = ((height - y) + aay / (double) aaSamples) / height;
                                 }
 
-                                var subPixelColor = black;
-                                
+                                //Create camera ray into current subpixel
                                 var camRay = ComputeCamRay(camera, xamnt, yamnt);
 
-                                subPixelColor = TraceRay(sceneObjects, camRay, light);
-
-                                subPixelColors.Add(subPixelColor);
+                                //Determine color for subpixel and add to array of subpixel colors
+                                subPixelColors.Add(TraceRay(sceneObjects, camRay, light));
                             }
                         }
 
