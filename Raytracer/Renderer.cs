@@ -143,7 +143,13 @@ namespace Raytracer
                     {
                         //Compute reflection ray
                         var winningObjectNormal = winningObject.GetNormalAt(intersectionPoint);
-                        var reflectionRay = ComputeReflectionRay(ray, intersectionPoint, winningObjectNormal);
+
+                        // Add epsilon to intersection point for secondary rays to counteract surface acne caused by incorrect self shadowing (rounding errors)
+                        // http://www.geekshavefeelings.com/x/wp-content/uploads/2010/03/Its-Really-Not-a-Rendering-Bug-You-see....pdf
+                        var epsilon = new Vect(Accuracy, Accuracy, Accuracy); 
+
+                        var reflectionRay = ComputeReflectionRay(ray, intersectionPoint.Add(epsilon), winningObjectNormal);
+                        //reflectionRay.Direction.Add(new Vect(1d, 1d, 1d));
                         depth++;
                         //Compute color for reflection ray by recursion
                         reflectionColor = TraceRay(sceneObjects, reflectionRay, light, depth);

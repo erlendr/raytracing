@@ -35,14 +35,14 @@ namespace Raytracer.Calculus.Objects
 
             double a = ray.Direction.DotProduct(Normal); // l dot n
 
-            if(a.Equals(0.0d))
+            if(Math.Abs(a - 0d) < 0.01d)
             {
                 //Ray is parallel to the plane (perpendicular) because angle between them is zero
                 return -1d;
             }
 
             double b = Normal.DotProduct(ray.Origin.Add(Normal.Mult(Distance).Negative())); // (l0 - n*p0) dot n
-            return -1*b/a; //Distance from ray origin to point of intersection (d)
+            return -1d*b/a; //Distance from ray origin to point of intersection (d)
         }
     }
 }
