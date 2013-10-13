@@ -13,3 +13,6 @@ Basic raytracer implemented in C#. Source: http://sourceforge.net/projects/raste
 
 ##30.09.13: Anti-aliasing implemented
 ![AA](https://dl.dropboxusercontent.com/u/1397694/output-4xaa.png "AA")
+
+##13.10.13: Reflections implemented
+![Reflections](https://dl.dropboxusercontent.com/u/1397694/output-reflections.png "Reflections")
