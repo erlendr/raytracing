@@ -13,7 +13,7 @@ using Color = Raytracer.Calculus.Color;
 */
 namespace Raytracer
 {
-    public class Renderer
+    public class Scene
     {
         readonly Vect _o = new Vect(0, 0, 0);
         readonly Vect _x = new Vect(1, 0, 0);
@@ -25,7 +25,7 @@ namespace Raytracer
         private const double AmbientCoefficient = 0.1d;
         private const double Accuracy = 0.00000000000001;
 
-        public Renderer()
+        public Scene()
         {
             var camera = CreateCamera();
 
@@ -33,11 +33,13 @@ namespace Raytracer
             var prettyGreen = new Color(0.5d, 1.0d, 0.5d, 0.3d);
             var red = new Color(1d, 0.0d, 0d, 0.3d);
             var gray = new Color(0.5d, 0.5d, 0.5d, 0d);
-            var black = new Color(0d, 0d, 0d, 0d);
-            var maroon = new Color(0.5d, 0.25d, 0.25d, 0);
+            //var black = new Color(0d, 0d, 0d, 0d);
+            //var maroon = new Color(0.5d, 0.25d, 0.25d, 0);
 
-            var lightPosition = new Vect(7, 5, -5);
-            var light = new Light(lightPosition, whiteLight);
+            var light1Position = new Vect(7, 5, -5);
+            var light1 = new Light(light1Position, whiteLight);
+            var light2Position = new Vect(7, 2, -2);
+            var light2 = new Light(light1Position, whiteLight);
 
             var lambertMaterial1 = new LambertMaterial(1d, AmbientCoefficient);
             var sceneSphere = new Sphere(_o.Add(new Vect(1d, -0.5d, -1.5d)), 0.75d, red, lambertMaterial1);
@@ -55,6 +57,12 @@ namespace Raytracer
                                        sceneSphere2,
                                        scenePlane
                                    };
+
+            var lights = new List<Light>
+                             {
+                                 light1,
+                                 light2
+                             };
 
             const int width = 500;
             const int height = 500;
@@ -97,11 +105,11 @@ namespace Raytracer
                                 var camRay = ComputeCamRay(camera, xamnt, yamnt);
 
                                 //Determine color for subpixel and add to array of subpixel colors
-                                subPixelColors.Add(TraceRay(sceneObjects, camRay, light, 0));
+                                subPixelColors.Add(TraceRay(sceneObjects, camRay, lights, 0));
                             }
                         }
 
-                        var finalColor = ComputeFinalColorFromSubpixelColors(subPixelColors);
+                        var finalColor = Color.ComputePixelColor(ComputeFinalColorFromSubpixelColors(subPixelColors).Clip());
 
                         //Set bitmap color using final averaged pixel color
                         SetBitmapPixel(bitmap, finalColor, x, y);
@@ -113,7 +121,7 @@ namespace Raytracer
             }
         }
 
-        private static Color TraceRay(List<SceneObject> sceneObjects, Ray ray, Light light, int depth)
+        private static Color TraceRay(List<SceneObject> sceneObjects, Ray ray, List<Light> lights, int depth)
         {
             var color = new Color(); // Black is default color for ray
             var reflectionColor = new Color();
@@ -147,22 +155,26 @@ namespace Raytracer
                         // Add epsilon to intersection point for secondary rays to counteract surface acne caused by incorrect self shadowing (rounding errors)
                         // http://www.geekshavefeelings.com/x/wp-content/uploads/2010/03/Its-Really-Not-a-Rendering-Bug-You-see....pdf
                         var epsilon = new Vect(Accuracy, Accuracy, Accuracy); 
-
                         var reflectionRay = ComputeReflectionRay(ray, intersectionPoint.Add(epsilon), winningObjectNormal);
-                        //reflectionRay.Direction.Add(new Vect(1d, 1d, 1d));
                         depth++;
+                        
                         //Compute color for reflection ray by recursion
-                        reflectionColor = TraceRay(sceneObjects, reflectionRay, light, depth);
+                        reflectionColor = TraceRay(sceneObjects, reflectionRay, lights, depth);
                     }
 
-                    //compute light ray
-                    var lightRay = ComputeLightRayFromPoint(intersectionPoint, light);
+                    var materialColor = new Color();
+                    foreach (var light in lights)
+                    {
+                        //compute light ray
+                        var lightRay = ComputeLightRayFromPoint(intersectionPoint, light);
 
-                    //Compute light ray intersection with all objects except winning object in scene
-                    var isInShadow = LightRayIntersectsObject(sceneObjects, indexOfWinningObject, lightRay);
+                        //Compute light ray intersection with all objects except winning object in scene
+                        var isInShadow = LightRayIntersectsObject(sceneObjects, indexOfWinningObject, lightRay);
 
-                    //Set pixel color using shade value
-                    var materialColor = winningObject.Material.ComputeColor(intersectionPoint, lightRay, isInShadow);
+                        //Set pixel color using shade value
+                        materialColor += winningObject.Material.ComputeColor(intersectionPoint, lightRay, isInShadow);
+                    }
+                    
                     color = isReflective ? materialColor.Average(reflectionColor) : materialColor;
                 }
             }
