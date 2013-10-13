@@ -81,20 +81,19 @@ namespace Raytracer.Calculus
 
         public Color Clip()
         {
-            double alllight = Red + Green + Blue;
-            double excesslight = alllight - 3;
-            if (excesslight > 0)
+            double sumOfLight = Red + Green + Blue;
+            double excessLight = sumOfLight - 3;
+
+            if (excessLight > 0)
             {
-                Red = Red + excesslight * (Red / alllight);
-                Green = Green + excesslight * (Green / alllight);
-                Blue = Blue + excesslight * (Blue / alllight);
+                Red = Red + excessLight * (Red / sumOfLight);
+                Green = Green + excessLight * (Green / sumOfLight);
+                Blue = Blue + excessLight * (Blue / sumOfLight);
             }
-            if (Red > 1) { Red = 1; }
-            if (Green > 1) { Green = 1; }
-            if (Blue > 1) { Blue = 1; }
-            if (Red < 0) { Red = 0; }
-            if (Green < 0) { Green = 0; }
-            if (Blue < 0) { Blue = 0; }
+
+            Red = Math.Max(Math.Min(Red, 1), 0);
+            Green = Math.Max(Math.Min(Green, 1), 0);
+            Blue = Math.Max(Math.Min(Blue, 1), 0);
 
             return new Color(Red, Green, Blue, Special);
         }
