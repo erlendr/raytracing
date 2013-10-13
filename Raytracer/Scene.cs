@@ -37,17 +37,17 @@ namespace Raytracer
             //var maroon = new Color(0.5d, 0.25d, 0.25d, 0);
 
             var light1Position = new Vect(7, 5, -5);
-            var light1 = new Light(light1Position, whiteLight);
-            var light2Position = new Vect(7, 2, -2);
-            var light2 = new Light(light1Position, whiteLight);
+            var light1 = new Light(light1Position, whiteLight, 0.5d);
+            var light2Position = new Vect(1, 5, -2);
+            var light2 = new Light(light2Position, whiteLight, 1.5d);
 
-            var lambertMaterial1 = new LambertMaterial(1d, AmbientCoefficient);
+            var lambertMaterial1 = new LambertMaterial(1d, AmbientCoefficient, 1.0d, true, true);
             var sceneSphere = new Sphere(_o.Add(new Vect(1d, -0.5d, -1.5d)), 0.75d, red, lambertMaterial1);
-            
-            var lambertMaterial2 = new LambertMaterial(1d, AmbientCoefficient);
+
+            var lambertMaterial2 = new LambertMaterial(1d, AmbientCoefficient, 1.0d, true, true);
             var sceneSphere2 = new Sphere(_o, 1.0d, prettyGreen, lambertMaterial2);
 
-            var planeMaterial = new LambertMaterial(1d, AmbientCoefficient);
+            var planeMaterial = new LambertMaterial(1d, AmbientCoefficient, 1.0d, true, true);
             //var planeMaterial = new FlatMaterial(AmbientCoefficient);
             var scenePlane = new Plane(_y, -1, gray, planeMaterial);          
 
@@ -121,7 +121,7 @@ namespace Raytracer
             }
         }
 
-        private static Color TraceRay(List<SceneObject> sceneObjects, Ray ray, List<Light> lights, int depth)
+        private static Color TraceRay(List<SceneObject> sceneObjects, Ray ray, IEnumerable<Light> lights, int depth)
         {
             var color = new Color(); // Black is default color for ray
             var reflectionColor = new Color();
@@ -159,7 +159,7 @@ namespace Raytracer
                         depth++;
                         
                         //Compute color for reflection ray by recursion
-                        reflectionColor = TraceRay(sceneObjects, reflectionRay, lights, depth);
+                        reflectionColor = TraceRay(sceneObjects, reflectionRay, lights, depth).Scalar(winningObject.Material.ReflectionCoefficient);
                     }
 
                     var materialColor = new Color();
@@ -172,7 +172,7 @@ namespace Raytracer
                         var isInShadow = LightRayIntersectsObject(sceneObjects, indexOfWinningObject, lightRay);
 
                         //Set pixel color using shade value
-                        materialColor += winningObject.Material.ComputeColor(intersectionPoint, lightRay, isInShadow);
+                        materialColor += winningObject.Material.ComputeColor(intersectionPoint, lightRay, isInShadow).Scalar(light.Intensity);
                     }
                     
                     color = isReflective ? materialColor.Average(reflectionColor) : materialColor;

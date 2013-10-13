@@ -8,8 +8,8 @@ namespace Raytracer.Calculus.Materials
         readonly double _ambientCoefficient;
         public override SceneObject SceneObject { get; set; }
 
-        public ChessMaterial(double diffuseCoefficient, double ambientCoefficient)
-            : base(diffuseCoefficient, ambientCoefficient)
+        public ChessMaterial(double diffuseCoefficient, double ambientCoefficient, double reflectionCoefficient, bool isReflective, bool isRefractive)
+            : base(diffuseCoefficient, ambientCoefficient, reflectionCoefficient, isReflective, isRefractive)
         {
             _ambientCoefficient = ambientCoefficient;
         }

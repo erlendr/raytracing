@@ -7,6 +7,7 @@ namespace Raytracer.Calculus.Materials
         public abstract SceneObject SceneObject { get; set; }
         public abstract bool IsReflective { get; set; }
         public abstract bool IsRefractive { get; set; }
+        public abstract double ReflectionCoefficient { get; set; }
         public abstract Color ComputeColor(Vect intersectionPoint, Ray lightRay, bool isInShadow);
     }
 }
